@@ -9,12 +9,14 @@ import SwiftUI
 
 @main
 struct DumbCharadesApp: App {
-    let persistenceController = PersistenceController.shared
-
+    init() {
+        movieService = MovieService()
+    }
+    
+    var movieService: MovieService
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }
