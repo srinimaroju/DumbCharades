@@ -11,7 +11,13 @@ import Combine
 struct ContentView: View {
     @ObservedObject var viewModel: MovieViewModel
     @State private var buttonText: String = "Start Playing..!"
-    
+    @State var currentDate = Date()
+    @State private var timeRemaining = 100
+    @State private var isTimerActive = false
+
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+
     init() {
         viewModel = MovieViewModel()
     }
@@ -34,7 +40,9 @@ struct ContentView: View {
                 Button {
                     print("Tapped")
                     viewModel.getMovies()
+                    timeRemaining = 100
                     buttonText = "Next Movie -->"
+                    isTimerActive = true
                     
                 } label: {
                     Text(buttonText)
@@ -48,6 +56,27 @@ struct ContentView: View {
                 .contentShape(Rectangle())
                 .background(Color.orange)
                 
+                Text("Remaining - \(timeRemaining)")
+                    .font(.system(size: 20, weight: .medium, design: .default))
+                    .foregroundColor(Color.orange)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 5)
+                    .frame(maxWidth: .infinity)
+                    .background(
+                        Capsule()
+                            .fill(Color.black)
+                            .opacity(0.75)
+                    )
+                    .onReceive(timer) { time in
+                        guard isTimerActive else { return }
+                        if self.timeRemaining > 0 {
+                            self.timeRemaining -= 1
+                        }
+                    }.onAppear {
+                        isTimerActive = true
+                    }.onDisappear {
+                        isTimerActive = false
+                    }
             
            }.frame(maxHeight: .infinity)
            .padding(10.0)
