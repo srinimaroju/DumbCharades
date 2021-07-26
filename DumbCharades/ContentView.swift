@@ -14,6 +14,10 @@ struct ContentView: View {
     @State var currentDate = Date()
     @State private var timeRemaining = 100
     @State private var isTimerActive = false
+    let pauseIcon = "pause.circle.fill"
+    let playIcon = "play.circle.fill"
+    let stopIcon = "stop.circle.fill"
+    let initTimeRemaining = 100
 
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -40,13 +44,13 @@ struct ContentView: View {
                 Button {
                     print("Tapped")
                     viewModel.getMovies()
-                    timeRemaining = 100
+                    timeRemaining = initTimeRemaining
                     buttonText = "Next Movie -->"
                     isTimerActive = true
                     
                 } label: {
                     Text(buttonText)
-                        .fontWeight(/*@START_MENU_TOKEN@*/.bold/*@END_MENU_TOKEN@*/)
+                        .fontWeight(.bold)
                         .foregroundColor(Color.white)
                         .lineLimit(0)
                         .padding(10.0).frame(maxWidth:.infinity)
@@ -55,18 +59,17 @@ struct ContentView: View {
                 }
                 .contentShape(Rectangle())
                 .background(Color.orange)
-                
+            
+            HStack {
+                Button(action: {
+                    isTimerActive = !isTimerActive
+                }) {
+                    Image(systemName: isTimerActive ? pauseIcon : playIcon)
+                }
+                .foregroundColor(Color.white)
+
                 Text("Remaining - \(timeRemaining)")
-                    .font(.system(size: 20, weight: .medium, design: .default))
-                    .foregroundColor(Color.orange)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 5)
-                    .frame(maxWidth: .infinity)
-                    .background(
-                        Capsule()
-                            .fill(Color.black)
-                            .opacity(0.75)
-                    )
+                    .frame(width: 280)
                     .onReceive(timer) { time in
                         guard isTimerActive else { return }
                         if self.timeRemaining > 0 {
@@ -77,6 +80,24 @@ struct ContentView: View {
                     }.onDisappear {
                         isTimerActive = false
                     }
+                
+                Button(action: {
+                    isTimerActive = false
+                    timeRemaining = initTimeRemaining
+                }) {
+                    Image(systemName: stopIcon)
+                }
+                .foregroundColor(Color.white)
+            }
+            .font(.system(size: 20, weight: .medium, design: .default))
+            .foregroundColor(Color.orange)
+            .padding(.vertical, 5)
+            .frame(maxWidth: .infinity)
+            .background(
+                Capsule()
+                    .fill(Color.black)
+                    .opacity(0.75)
+            )
             
            }.frame(maxHeight: .infinity)
            .padding(10.0)
