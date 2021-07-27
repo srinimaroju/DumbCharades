@@ -66,10 +66,11 @@ struct ContentView: View {
                 }) {
                     Image(systemName: isTimerActive ? pauseIcon : playIcon)
                 }
+                .frame(minWidth: 60, maxWidth: 60)
                 .foregroundColor(Color.white)
 
                 Text("Remaining - \(timeRemaining)")
-                    .frame(width: 280)
+                    .frame(minWidth: 150, maxWidth: .infinity)
                     .onReceive(timer) { time in
                         guard isTimerActive else { return }
                         if self.timeRemaining > 0 {
@@ -87,6 +88,7 @@ struct ContentView: View {
                 }) {
                     Image(systemName: stopIcon)
                 }
+                .frame(minWidth: 60, maxWidth: 60)
                 .foregroundColor(Color.white)
             }
             .font(.system(size: 20, weight: .medium, design: .default))
